@@ -1,5 +1,4 @@
 #args [file_to_lauch, directory (defaulr is file_to_launch dir)]
-require "pp"
 unless ARGV[0]
     puts "error: file_to_launch argument missing"
     exit
