@@ -31,22 +31,27 @@ def get_dir_struct path
 
     child_struct
 end
-def get_sub_files arg
+def get_sub_files arg, paths_to_ignore
     array = []
     struct = arg #arg is a struct
     struct = get_dir_struct arg if arg.class == String #arg is a path
     struct.each{ |child|
         if child.class == Array
-            array += get_sub_files child
+            array += get_sub_files child, paths_to_ignore
             next
         end
+        next if paths_to_ignore.reduce(false){|acc, val| acc || child.include?(val)} 
         array.push child
     }
     array
 end
 
+#.watchignore
+paths_to_ignore = []
+paths_to_ignore = File.readlines("#{dir_path}/.watchignore").map(&:chomp) if File.exists? "#{dir_path}/.watchignore"
+
 #prepare watch lists
-files_to_watch = get_sub_files dir_path
+files_to_watch = get_sub_files dir_path, paths_to_ignore
 watch_list = {}
 files_to_watch.each{ |file_path|
     puts "watching #{file_path}"
